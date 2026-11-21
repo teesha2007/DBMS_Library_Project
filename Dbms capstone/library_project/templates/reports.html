@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Reports{% endblock %}
+
+{# A macro is like a function in HTML: it draws ANY list of rows as a table #}
+{% macro show_table(rows) %}
+    {% if rows %}
+    <table>
+        <tr>{% for col in rows[0].keys() %}<th>{{ col.replace('_', ' ')|title }}</th>{% endfor %}</tr>
+        {% for row in rows %}
+        <tr>{% for col in row.keys() %}<td>{{ row[col] }}</td>{% endfor %}</tr>
+        {% endfor %}
+    </table>
+    {% else %}
+        <p class="muted">No records.</p>
+    {% endif %}
+{% endmacro %}
+
+{% block content %}
+<h1>Reports &amp; Analytics</h1>
+
+<h2>1. Overdue Books <span class="muted">(View: v_overdue_books)</span></h2>
+<div class="card">{{ show_table(d.overdue_view) }}</div>
+
+<h2>2. Popular Resources <span class="muted">(View: v_popular_resources)</span></h2>
+<div class="card">{{ show_table(d.popular_view) }}</div>
+
+<h2>3. Member Summary <span class="muted">(View: v_member_summary)</span></h2>
+<div class="card">{{ show_table(d.member_view) }}</div>
+
+<h2>4. Frequently Borrowed (above average) <span class="muted">(CTE)</span></h2>
+<div class="card">{{ show_table(d.frequent_cte) }}</div>
+
+<h2>5. Rank Inside Each Category <span class="muted">(Window function RANK)</span></h2>
+<div class="card">{{ show_table(d.ranking) }}</div>
+
+<h2>6. Never Borrowed <span class="muted">(EXCEPT)</span></h2>
+<div class="card">{{ show_table(d.never_borrowed) }}</div>
+
+<h2>7. Members Who Borrowed AND Reserved <span class="muted">(INTERSECT)</span></h2>
+<div class="card">{{ show_table(d.borrowed_and_reserved) }}</div>
+
+<h2>8. Members Who Borrowed OR Reserved <span class="muted">(UNION)</span></h2>
+<div class="card">{{ show_table(d.active_members) }}</div>
+
+<h2>9. Penalties</h2>
+<div class="card">
+    <table>
+        <tr><th>ID</th><th>Member</th><th>Resource</th><th>Days Late</th><th>Amount (Rs.)</th><th>Status</th><th></th></tr>
+        {% for p in d.penalties %}
+        <tr>
+            <td>{{ p.penalty_id }}</td><td>{{ p.member_name }}</td><td>{{ p.title }}</td>
+            <td>{{ p.days_late }}</td><td>{{ p.amount }}</td><td>{{ p.status }}</td>
+            <td>
+                {% if p.status == 'Unpaid' %}
+                <form method="POST" action="{{ url_for('pay_penalty', penalty_id=p.penalty_id) }}">
+                    <button class="small" type="submit">Mark Paid</button>
+                </form>
+                {% endif %}
+            </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7">No penalties.</td></tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

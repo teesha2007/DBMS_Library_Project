@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Library System{% endblock %}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; background: #f4f6f9; color: #222; }
+        nav { background: #1f3a5f; padding: 12px 24px; }
+        nav a { color: white; text-decoration: none; margin-right: 20px; font-weight: bold; }
+        nav a:hover { text-decoration: underline; }
+        .container { max-width: 1100px; margin: 24px auto; padding: 0 16px; }
+        h1 { color: #1f3a5f; }
+        h2 { color: #1f3a5f; margin-top: 32px; }
+        .card { background: white; padding: 16px 20px; border-radius: 8px;
+                box-shadow: 0 1px 4px rgba(0,0,0,0.12); margin-bottom: 20px; overflow-x: auto; }
+        .stats { display: flex; flex-wrap: wrap; gap: 16px; }
+        .stat { background: white; padding: 16px 24px; border-radius: 8px; min-width: 150px;
+                box-shadow: 0 1px 4px rgba(0,0,0,0.12); text-align: center; }
+        .stat .num { font-size: 30px; font-weight: bold; color: #1f3a5f; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border-bottom: 1px solid #ddd; padding: 8px 10px; text-align: left; font-size: 14px; }
+        th { background: #e8eef6; }
+        form.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+        label { font-size: 13px; font-weight: bold; display: block; margin-bottom: 4px; }
+        input, select { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #bbb; border-radius: 4px; }
+        button { background: #1f3a5f; color: white; border: none; padding: 9px 16px;
+                 border-radius: 4px; cursor: pointer; }
+        button:hover { background: #2e5588; }
+        button.small { padding: 5px 10px; font-size: 13px; }
+        .flash { padding: 10px 14px; border-radius: 4px; margin-bottom: 14px; }
+        .flash.success { background: #d9f2de; color: #176a2b; }
+        .flash.error { background: #fbdada; color: #9b1c1c; }
+        .late { color: #b00020; font-weight: bold; }
+        .muted { color: #666; font-size: 13px; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="{{ url_for('home') }}">Dashboard</a>
+        <a href="{{ url_for('books') }}">Books &amp; Resources</a>
+        <a href="{{ url_for('members') }}">Members</a>
+        <a href="{{ url_for('circulation') }}">Borrow / Return</a>
+        <a href="{{ url_for('reports') }}">Reports</a>
+    </nav>
+    <div class="container">
+        {# Show messages created with flash() in app.py #}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Borrow / Return{% endblock %}
+{% block content %}
+<h1>Borrow, Return &amp; Reserve</h1>
+
+<div class="card">
+    <h3>Borrow a Resource</h3>
+    <form class="grid" method="POST" action="{{ url_for('borrow') }}">
+        <div><label>Member</label>
+            <select name="member_id">
+                {% for m in members %}<option value="{{ m.member_id }}">{{ m.member_name }}</option>{% endfor %}
+            </select></div>
+        <div><label>Resource</label>
+            <select name="resource_id">
+                {% for r in resources %}<option value="{{ r.resource_id }}">{{ r.title }} ({{ r.available_copies }} available)</option>{% endfor %}
+            </select></div>
+        <div style="align-self:end"><button type="submit">Issue</button></div>
+    </form>
+    <p class="muted">Due date is set automatically from the member's membership type.</p>
+</div>
+
+<div class="card">
+    <h3>Reserve a Resource</h3>
+    <form class="grid" method="POST" action="{{ url_for('reserve') }}">
+        <div><label>Member</label>
+            <select name="member_id">
+                {% for m in members %}<option value="{{ m.member_id }}">{{ m.member_name }}</option>{% endfor %}
+            </select></div>
+        <div><label>Resource</label>
+            <select name="resource_id">
+                {% for r in resources %}<option value="{{ r.resource_id }}">{{ r.title }}</option>{% endfor %}
+            </select></div>
+        <div style="align-self:end"><button type="submit">Reserve</button></div>
+    </form>
+</div>
+
+<h2>Currently Borrowed (click Return when the item comes back)</h2>
+<div class="card">
+    <table>
+        <tr><th>Member</th><th>Resource</th><th>Issued</th><th>Due</th>
+            <th>Days Late</th><th>Penalty if returned today</th><th></th></tr>
+        {% for l in loans %}
+        <tr>
+            <td>{{ l.member_name }}</td><td>{{ l.title }}</td>
+            <td>{{ l.issue_date }}</td><td>{{ l.due_date }}</td>
+            <td {% if l.days_late > 0 %}class="late"{% endif %}>{{ l.days_late }}</td>
+            <td {% if l.fine > 0 %}class="late"{% endif %}>Rs. {{ l.fine }}</td>
+            <td>
+                <form method="POST" action="{{ url_for('return_book', transaction_id=l.transaction_id) }}">
+                    <button class="small" type="submit">Return</button>
+                </form>
+            </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7">Nothing is currently borrowed.</td></tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

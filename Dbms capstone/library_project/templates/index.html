@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h1>Library Dashboard</h1>
+<div class="stats">
+    <div class="stat"><div class="num">{{ stats.resources }}</div>Titles (Books &amp; Resources)</div>
+    <div class="stat"><div class="num">{{ stats.physical_available }} / {{ stats.physical_total }}</div>Physical Copies Available</div>
+    <div class="stat"><div class="num">{{ stats.digital }}</div>Digital Resources</div>
+    <div class="stat"><div class="num">{{ stats.members }}</div>Members</div>
+    <div class="stat"><div class="num">{{ stats.issued }}</div>Currently Borrowed</div>
+    <div class="stat"><div class="num late">{{ stats.overdue }}</div>Overdue</div>
+    <div class="stat"><div class="num">{{ stats.reservations }}</div>Active Reservations</div>
+    <div class="stat"><div class="num">Rs. {{ stats.unpaid }}</div>Unpaid Fines</div>
+</div>
+
+<h2>Recent Activity</h2>
+<div class="card">
+    <table>
+        <tr><th>Member</th><th>Resource</th><th>Issue Date</th><th>Status</th></tr>
+        {% for row in recent %}
+        <tr>
+            <td>{{ row.member_name }}</td><td>{{ row.title }}</td>
+            <td>{{ row.issue_date }}</td><td>{{ row.status }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

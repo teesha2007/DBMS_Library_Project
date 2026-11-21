@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Books &amp; Resources{% endblock %}
+{% block content %}
+<h1>Books &amp; Digital Resources</h1>
+
+<div class="card">
+    <h3>Add a New Resource</h3>
+    <form class="grid" method="POST" action="{{ url_for('add_book') }}">
+        <div><label>Title</label><input name="title" required></div>
+        <div><label>Type</label>
+            <select name="resource_type">
+                <option>Physical</option>
+                <option>Digital</option>
+            </select></div>
+        <div><label>ISBN (optional)</label><input name="isbn"></div>
+        <div><label>Publication Year</label><input name="year" type="number" min="1000" max="2100"></div>
+        <div><label>Number of Copies / Licences</label><input name="copies" type="number" min="1" value="1" required></div>
+        <div><label>Author</label><input name="author" required></div>
+        <div><label>Publisher</label><input name="publisher" required></div>
+        <div><label>Category</label>
+            <select name="category_id">
+                {% for c in categories %}<option value="{{ c.category_id }}">{{ c.category_name }}</option>{% endfor %}
+            </select></div>
+        <div><label>Access Link (digital only)</label><input name="access_link"></div>
+        <div style="align-self:end"><button type="submit">Add Resource</button></div>
+    </form>
+</div>
+
+<div class="card">
+    <table>
+        <tr><th>ID</th><th>Title</th><th>Type</th><th>Authors</th><th>Publisher</th>
+            <th>Category</th><th>ISBN</th><th>Year</th><th>Available / Total</th></tr>
+        {% for r in resources %}
+        <tr>
+            <td>{{ r.resource_id }}</td>
+            <td>{{ r.title }}</td>
+            <td>{{ r.resource_type }}</td>
+            <td>{{ r.authors }}</td>
+            <td>{{ r.publisher_name }}</td>
+            <td>{{ r.category_name }}</td>
+            <td>{{ r.isbn or '-' }}</td>
+            <td>{{ r.publication_year or '-' }}</td>
+            <td>{{ r.available_copies }} / {{ r.total_copies }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}
